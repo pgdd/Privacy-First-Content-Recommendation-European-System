@@ -1,14 +1,14 @@
 
-# Privacy-First Content Recommendation System
+# Privacy-First Content Recommendation System - EU-Centric
 
 ## Project Goal
 
-The **Privacy-First Content Recommendation System** aims to deliver personalized content recommendations with a focus on data privacy, user experience, and scalability. This project is designed for large-scale applications and adheres to the best practices in frontend architecture, backend infrastructure, and data privacy, with a strict commitment to compliance with European data privacy regulations (e.g., GDPR).
+The **Privacy-First Content Recommendation System** aims to deliver personalized content recommendations with a focus on data privacy, user experience, and scalability. This project is designed for large-scale applications and adheres to best practices in frontend architecture, backend infrastructure, and data privacy, with a strict commitment to compliance with European data privacy regulations, particularly **GDPR** and **German Federal Data Protection Act (BDSG)**.
 
 ## Key Objectives
 
 1.  **Scalable Architecture**: Create a modular, flexible system that scales seamlessly with user growth, ensuring high performance without compromising user privacy.
-2.  **Data Privacy Compliance**: Architect the system to comply with European privacy laws, minimizing data exposure, and protecting user information at every level.
+2.  **Data Privacy Compliance**: Architect the system to comply with European privacy laws, prioritizing data residency within the EU, minimizing data exposure, and protecting user information at every level.
 3.  **User-Centric Approach**: Design with the user in mind, creating an interface that enhances engagement through responsive design and intuitive interactions.
 4.  **Efficiency in Frontend and Backend**: Apply best practices for component-driven frontend design and microservice-based backend architecture to optimize for both usability and system resilience.
 
@@ -28,9 +28,10 @@ The **Privacy-First Content Recommendation System** aims to deliver personalized
 
 -   **Frontend**: React with Client-Side Rendering (CSR) for modular, component-driven UI.
 -   **Backend**: Node.js with TypeScript, employing REST API design principles.
--   **Database**: PostgreSQL with field-level encryption for sensitive data.
--   **Infrastructure**: Docker for containerization, Kubernetes for orchestration, and either an American cloud platform (AWS, GCP) or EU-centric options (e.g., OVHCloud).
--   **Monitoring and Logging**: Prometheus and Grafana for observability.
+-   **Database**: PostgreSQL with field-level encryption for sensitive data, hosted on **OVHCloud** for GDPR compliance.
+-   **Infrastructure**: Docker for containerization, Kubernetes (OVHCloud’s Managed Kubernetes) for orchestration, ensuring data residency within the EU.
+-   **Caching**: Redis hosted on OVHCloud, with configurations for GDPR compliance.
+-   **Monitoring and Logging**: Elastic Stack (ELK) or Grafana, hosted on OVHCloud.
 -   **Testing**: Jest and React Testing Library for frontend tests, Mocha for backend tests.
 
 ## Features
@@ -38,7 +39,7 @@ The **Privacy-First Content Recommendation System** aims to deliver personalized
 ### Core Functionalities
 
 1.  **User-Centric Content Recommendations**: Provides users with personalized content recommendations based on anonymized and locally stored preferences.
-2.  **Data Privacy-Focused Storage**: All personal data remains on the client side where possible, with only anonymized metadata sent to the backend.
+2.  **Data Privacy-Focused Storage**: Personal data remains on the client side where possible, with only anonymized metadata sent to the backend.
 3.  **Responsive Interface**: Built with accessibility-first and mobile-first principles, ensuring consistent performance across devices.
 
 ### Privacy-Specific Features
@@ -68,24 +69,39 @@ The backend is composed of several RESTful microservices, each responsible for s
 -   **GET /recommendations**: Provides personalized, anonymized content recommendations based on metadata.
 -   **POST /interactions**: Logs anonymized user interactions for analytics, adhering to GDPR guidelines.
 
-### Database (PostgreSQL with Encryption)
+### Database (PostgreSQL with Encryption on OVHCloud)
 
-The database stores anonymized user interaction data with **field-level encryption** for added security. This ensures that any sensitive information remains unreadable without decryption keys.
+The database stores anonymized user interaction data with **field-level encryption** for added security, hosted within OVHCloud’s EU-based data centers.
+
+### Caching with Redis (Hosted on OVHCloud)
+
+**GDPR Compliance Considerations**:
+
+1.  **Data Residency**: Redis instances are hosted on OVHCloud within EU data centers, ensuring all cached data remains within the EU.
+2.  **Data Minimization**: Cache only essential, non-identifiable information where possible. For example, use hashed or pseudonymized session tokens rather than directly caching PII.
+3.  **Data Encryption**:
+    -   **Application-Level Encryption**: Since Redis does not natively encrypt data at rest, sensitive data should be encrypted before storing in Redis.
+    -   **Data in Transit**: Use TLS encryption to secure data transfers to and from Redis.
+4.  **Data Retention and Expiration**: Set time-to-live (TTL) for cached entries to automatically expire sensitive data, helping to comply with GDPR’s data minimization and retention policies.
 
 ### Infrastructure and Deployment
 
 -   **Containerization**: Docker is used to create isolated environments, ensuring consistency across development, testing, and production.
--   **Orchestration**: Kubernetes manages service deployment and scaling, enabling automatic load balancing and self-healing for high availability.
--   **Monitoring and Observability**: Prometheus collects system metrics, and Grafana visualizes them for real-time monitoring and alerts.
+-   **Orchestration**: Kubernetes on OVHCloud manages service deployment and scaling, enabling automatic load balancing and self-healing for high availability within Europe.
+-   **Monitoring and Observability**: Elastic Stack (ELK) or Grafana on OVHCloud collects system metrics and visualizes them for real-time monitoring and alerts.
 
 ## Data Privacy and Compliance
 
-In adherence to **GDPR** and other European privacy laws, this project prioritizes data privacy and user rights at every stage of data handling.
+In adherence to **GDPR** and **German Federal Data Protection Act (BDSG)**, this project prioritizes data privacy and user rights at every stage of data handling.
 
-1.  **Data Minimization**: Only essential user interactions are stored, and personal identifiers are excluded.
-2.  **User Consent**: Users are prompted to opt in for any form of tracking or analytics, with clear, accessible options to adjust these preferences.
-3.  **Anonymization**: Where data must be stored, anonymization techniques are applied to ensure that individual users cannot be re-identified.
-4.  **Encryption at Rest**: Sensitive data stored on the backend is encrypted to protect it from unauthorized access.
+1.  **Data Residency**: All data is stored and processed within OVHCloud’s EU data centers, ensuring compliance with data residency requirements.
+2.  **Data Minimization**: Only essential user interactions are stored, and personal identifiers are excluded.
+3.  **User Consent**: Users are prompted to opt in for any form of tracking or analytics, with clear, accessible options to adjust these preferences.
+4.  **Anonymization**: Where data must be stored, anonymization techniques are applied to ensure that individual users cannot be re-identified.
+5.  **Encryption at Rest**: Sensitive data stored on the backend is encrypted to protect it from unauthorized access.
+6.  **Redis Caching Compliance**:
+    -   **Data Minimization and TTL**: Only essential data is cached, with TTL settings for sensitive data.
+    -   **Application-Level Encryption**: Sensitive data cached in Redis is encrypted at the application level, ensuring GDPR-compliant handling.
 
 ## Design System
 
@@ -114,49 +130,42 @@ The project employs a design system to ensure visual and functional consistency 
 
 1.  **Clone the Repository**:
     
-    bash
-    
-    Copier le code
-    
-    `git clone https://github.com/your-username/privacy-first-recommendation-system.git
-    cd privacy-first-recommendation-system` 
-    
+```bash
+git clone https://github.com/your-username/privacy-first-recommendation-system.git
+cd privacy-first-recommendation-system 
+``` 
+
 2.  **Install Dependencies**:
     
-    bash
-    
-    Copier le code
-    
-    `npm install` 
-    
+```bash
+npm install 
+```
+
 3.  **Configure Environment Variables**:
     
-    -   Set up `.env` files in the root directory with database credentials, API keys, and encryption keys.
+    -   Set up `.env` files in the root directory with database credentials, API keys, and encryption keys specific to OVHCloud services.
 4.  **Run Docker Containers**:
-    
-    bash
-    
-    Copier le code
-    
-    `docker-compose up -d` 
-    
+
+```bash
+docker-compose up -d 
+```
+
 5.  **Start the Development Server**:
     
-    bash
-    
-    Copier le code
-    
-    `npm run dev` 
-    
+```bash
+npm run dev 
+```
 
 ## Contribution
 
 We welcome contributions that align with the project’s goals of data privacy and user-centric design. Please adhere to the following:
 
-1.  Fork the repository and create a new branch.
+1.  **Fork** the repository and create a new branch using `git flow`. This project follows the `git flow` methodology for managing feature, release, and hotfix branches.
 2.  Follow the project’s coding standards, including naming conventions, and avoid hard-coding sensitive information.
-3.  Ensure all changes pass tests and are compliant with GDPR and privacy-focused practices.
+3.  Ensure all changes pass tests and comply with GDPR and privacy-focused practices.
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT Licence. Please have a look at the LICENCE file for details. It reflects an EU-centric, GDPR-compliant configuration using OVHCloud as an example, focusing on minimising data exposure and ensuring compliance with European data privacy laws.
+
+----------
